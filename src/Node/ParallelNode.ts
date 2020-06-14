@@ -25,7 +25,7 @@ export default class ParallelNode implements ParentBehaviorTreeNodeInterface {
     ) {
     }
 
-    public async tick(state: StateData): Promise<BehaviorTreeStatus> {
+    public async tick(state: StateData, parent: BehaviorTreeNodeInterface): Promise<BehaviorTreeStatus> {
         const statuses: BehaviorTreeStatus[] = await Promise.all(this.children.map((c) => this.tickChildren(state, c)));
         const succeeded                      = statuses.filter((x) => x === BehaviorTreeStatus.Success).length;
         const failed                         = statuses.filter((x) => x === BehaviorTreeStatus.Failure).length;
@@ -46,7 +46,7 @@ export default class ParallelNode implements ParentBehaviorTreeNodeInterface {
 
     private async tickChildren(state: StateData, child: BehaviorTreeNodeInterface): Promise<BehaviorTreeStatus> {
         try {
-            return await child.tick(state);
+            return await child.tick(state, child);
         } catch (e) {
             return BehaviorTreeStatus.Failure;
         }

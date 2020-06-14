@@ -19,12 +19,12 @@ export default class InverterNode implements ParentBehaviorTreeNodeInterface {
     public constructor(public readonly name: string) {
     }
 
-    public async tick(state: StateData): Promise<BehaviorTreeStatus> {
+    public async tick(state: StateData, parent: BehaviorTreeNodeInterface): Promise<BehaviorTreeStatus> {
         if (!this.childNode) {
             throw new BehaviorTreeError(Errors.INVERTER_NO_CHILDREN);
         }
 
-        const result = await this.childNode.tick(state);
+        const result = await this.childNode.tick(state, this);
         if (result === BehaviorTreeStatus.Failure) {
             return BehaviorTreeStatus.Success;
         } else if (result === BehaviorTreeStatus.Success) {

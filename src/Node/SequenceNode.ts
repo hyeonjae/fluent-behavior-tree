@@ -29,7 +29,7 @@ export default class SequenceNode implements ParentBehaviorTreeNodeInterface {
         this.enumerator = new NodeEnumerator(this.children);
     }
 
-    public async tick(state: StateData): Promise<BehaviorTreeStatus> {
+    public async tick(state: StateData, parent: BehaviorTreeNodeInterface): Promise<BehaviorTreeStatus> {
         if (!this.enumerator || !this.keepState) {
             this.init();
         }
@@ -39,7 +39,7 @@ export default class SequenceNode implements ParentBehaviorTreeNodeInterface {
         }
 
         do {
-            const status = await this.enumerator.current.tick(state);
+            const status = await this.enumerator.current.tick(state, this);
             if (status !== BehaviorTreeStatus.Success) {
                 if (status === BehaviorTreeStatus.Failure) {
                     this.enumerator.reset();
